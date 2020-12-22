@@ -22,8 +22,22 @@
         const pass = u_password.value;
         const auth = firebase.auth();
 
-        const promise = auth.signInWithEmailAndPassword(email, pass);
-        promise.catch(e => console.log(e.message));
+        // const promise = auth.signInWithEmailAndPassword(email, pass);
+        // promise.catch(e => console.log(e.message));
+        firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION)
+            .then(function() {
+                // Existing and future Auth states are now persisted in the current
+                // session only. Closing the window would clear any existing state even
+                // if a user forgets to sign out.
+                // ...
+                // New sign-in will be persisted with session persistence.
+                return firebase.auth().signInWithEmailAndPassword(email, pass);
+            })
+            .catch(function(error) {
+                // Handle Errors here.
+                var errorCode = error.code;
+                var errorMessage = error.message;
+            });
     });
 
     btnSignUp.addEventListener('click', e => {
@@ -38,20 +52,6 @@
     btnLogout.addEventListener('click', e => {
         firebase.auth().signOut();
     });
-    firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION)
-        .then(function() {
-            // Existing and future Auth states are now persisted in the current
-            // session only. Closing the window would clear any existing state even
-            // if a user forgets to sign out.
-            // ...
-            // New sign-in will be persisted with session persistence.
-            return firebase.auth().signInWithEmailAndPassword(email, password);
-        })
-        .catch(function(error) {
-            // Handle Errors here.
-            var errorCode = error.code;
-            var errorMessage = error.message;
-        });
     firebase.auth().onAuthStateChanged(firebaseUser => {
         if (firebaseUser) {
             console.log(firebaseUser);
